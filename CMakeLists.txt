@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.14)
 
-project(cutefish-texteditor LANGUAGES CXX)
+project(pisces-texteditor LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -22,11 +22,11 @@ set(PROJECT_SOURCES
         qml.qrc
 )
 
-add_executable(cutefish-texteditor
+add_executable(pisces-texteditor
   ${PROJECT_SOURCES}
 )
 
-target_link_libraries(cutefish-texteditor
+target_link_libraries(pisces-texteditor
   PRIVATE
   Qt5::Core
   Qt5::Quick

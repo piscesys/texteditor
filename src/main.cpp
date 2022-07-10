@@ -12,8 +12,8 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
-    qmlRegisterType<DocumentHandler>("Cutefish.TextEditor", 1, 0, "DocumentHandler");
-    qmlRegisterType<FileHelper>("Cutefish.TextEditor", 1, 0, "FileHelper");
+    qmlRegisterType<DocumentHandler>("Pisces.TextEditor", 1, 0, "DocumentHandler");
+    qmlRegisterType<FileHelper>("Pisces.TextEditor", 1, 0, "FileHelper");
 
     HighlightModel m;
 

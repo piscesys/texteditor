@@ -4,7 +4,7 @@ import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import FishUI 1.0 as FishUI
-import Cutefish.TextEditor 1.0
+import Pisces.TextEditor 1.0
 
 Item {
     id: control

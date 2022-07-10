@@ -3,7 +3,7 @@ import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import FishUI 1.0 as FishUI
-import Cutefish.TextEditor 1.0
+import Pisces.TextEditor 1.0
 
 FishUI.Window {
     id: root
@@ -128,7 +128,7 @@ FishUI.Window {
         id: textEditorCompeont
 
         TextEditor {
-            fileUrl: "file:///home/cutefish/桌面/winepath"
+            fileUrl: "file:///home/pisces/桌面/winepath"
         }
     }
 
