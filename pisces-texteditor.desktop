@@ -1,8 +1,8 @@
 [Desktop Entry]
 Categories=Utility;TextEditor;
 Comment=General text editor
-Exec=pisces-editor %F
-Icon=pisces-editor
+Exec=/usr/bin/pisces-texteditor %F
+Icon=pisces-texteditor
 Name=Pisces Text Editor
 GenericName=Pisces Text Editor
 StartupNotify=false

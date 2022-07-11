@@ -32,3 +32,11 @@ target_link_libraries(pisces-texteditor
   Qt5::Quick
   KF5::SyntaxHighlighting
   )
+
+install(TARGETS ${PROJECT_NAME} RUNTIME DESTINATION /usr/bin)
+
+install(FILES
+    pisces-texteditor.desktop
+    DESTINATION /usr/share/applications/
+    COMPONENT Runtime
+)
