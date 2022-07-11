@@ -1,3 +1,10 @@
+pisces-texteditor (0.9.1) misaka; urgency=medium
+
+  * fix : Unable to build binary package
+  * feat: Close tab prompt when not saved; Simple save as prompt
+
+ -- Tsukuyomi Toki <huangzimocp@126.com> Mon, 11 Jul 2022 16:09:09 +0800
+
 pisces-texteditor (0.9) misaka; urgency=medium
 
   * Initial Release for Pisces.

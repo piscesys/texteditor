@@ -1,3 +1,23 @@
+/*
+ * Copyright (C) 2022 Piscesys Team.
+ *
+ * Author:     Reion Wong <reionwong@gmail.com>
+ *             TsukuyomiToki <huangzimocp@126.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
@@ -18,7 +38,20 @@ FishUI.Window {
         id: fileHelper
 
         onNewPath: {
-            _tabView.addTab(textEditorCompeont, { fileUrl: path })
+            _tabView.addTab(textEditorComponent, { fileUrl: path })
+        }
+    }
+
+    ExitPromptDialog {
+        id: exitPrompt
+
+        property var index: -1
+
+        onOkBtnClicked: {
+            if(index != -1)
+                closeTab(index)
+            else
+                Qt.quit()
         }
     }
 
@@ -62,7 +95,7 @@ FishUI.Window {
                 }
 
                 onCloseClicked: {
-                    _tabView.closeTab(index)
+                    closeProtection(index)
                 }
             }
         }
@@ -117,18 +150,69 @@ FishUI.Window {
     }
 
     function addPath(path) {
-        _tabView.addTab(textEditorCompeont, { fileUrl: path })
+        _tabView.addTab(textEditorComponent, { fileUrl: path })
     }
 
     function addTab() {
-        _tabView.addTab(textEditorCompeont, {})
+        _tabView.addTab(textEditorComponent, {})
+        _tabView.currentItem.forceActiveFocus()
+    }
+
+    onClosing: {
+        for (var i = 0; i < _tabView.contentModel.count; i++) {
+            var obj = _tabView.contentModel.get(i)
+            if (obj.documentModified) {
+                exitPrompt.index = i
+                exitPrompt.visible = true
+                close.accepted = false
+                return
+            }
+        }
+        close.accepted = true
+    }
+
+    function closeProtection(index) {
+        var obj = _tabView.contentModel.get(index)
+        if (obj.documentModified) {
+            exitPrompt.index = index
+            exitPrompt.visible = true
+            return
+        }
+
+        closeTab(index)
+    }
+
+    function closeTab(index) {
+        _tabView.closeTab(index)
+
+        if (_tabView.contentModel.count === 0)
+            Qt.quit()
+
+        _tabView.currentItem.forceActiveFocus()
+    }
+
+    function closeCurrentTab() {
+        closeProtection(_tabView.currentIndex)
+    }
+
+    function toggleTab(arg) { //arg = -1 (forward) or 1 (backward)
+        var nextIndex = _tabView.currentIndex + arg
+        if (nextIndex > _tabView.contentModel.count - 1)
+            nextIndex = 0
+        if (nextIndex < 0)
+            nextIndex = _tabView.contentModel.count - 1
+
+        _tabView.currentIndex = nextIndex
+        _tabView.currentItem.forceActiveFocus()
     }
 
     Component {
-        id: textEditorCompeont
+        id: textEditorComponent
 
         TextEditor {
-            fileUrl: "file:///home/pisces/桌面/winepath"
+            fileUrl: ""
+            fileName: "Untitled"
+            newFile: true
         }
     }
 

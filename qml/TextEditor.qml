@@ -1,8 +1,29 @@
+/*
+ * Copyright (C) 2022 Piscesys Team.
+ *
+ * Author:     Reion Wong <reionwong@gmail.com>
+ *             TsukuyomiToki <huangzimocp@126.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 import QtQuick 2.15
 import QtQml 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import Qt.labs.platform 1.1
 import FishUI 1.0 as FishUI
 import Pisces.TextEditor 1.0
 
@@ -10,9 +31,11 @@ Item {
     id: control
 
     property var tabName: document.fileName + (document.modified ? " *" : "")
+    property var documentModified: document.modified
 
     property alias fileUrl: document.fileUrl
     property alias fileName: document.fileName
+    property bool newFile: false
     property bool showLineNumbers: true
     property int characterCount: body.text.length
 
@@ -86,8 +109,47 @@ Item {
 
                 Keys.enabled: true
                 Keys.onPressed: {
-                    if ((event.modifiers & Qt.ControlModifier) && (event.key === Qt.Key_S)) {
+                    if ((event.key === Qt.Key_S)
+                            && (event.modifiers & Qt.ControlModifier)
+                            && !(event.modifiers & Qt.ShiftModifier)) {
                         control.save()
+                        event.accepted = true
+                    }
+                    if ((event.key === Qt.Key_S)
+                            && (event.modifiers & Qt.ControlModifier)
+                            && (event.modifiers & Qt.ShiftModifier)) {
+                        control.saveas()
+                        event.accepted = true
+                    }
+                    if (((event.key === Qt.Key_T) || (event.key === Qt.Key_N))
+                            && (event.modifiers & Qt.ControlModifier)) {
+                        root.addTab()
+                        event.accepted = true
+                    }
+                    if ((event.key === Qt.Key_W)
+                            && (event.modifiers & Qt.ControlModifier)) {
+                        root.closeCurrentTab()
+                        event.accepted = true
+                    }
+
+                    /*if ((event.key === Qt.Key_Tab)
+                            && (event.modifiers & Qt.ControlModifier)
+                            && !(event.modifiers & Qt.ShiftModifier)) {
+                        root.toggleTab(1)
+                        event.accepted = true
+                    }
+                    if ((event.key === Qt.Key_Tab)
+                            && (event.modifiers & Qt.ControlModifier)
+                            && (event.modifiers & Qt.ShiftModifier)) { // Why isn't this working?
+                        root.toggleTab(0)
+                        event.accepted = true
+                    }*/ //Shift + Tab = Qt.Key_Backtab. Solution below:
+                    if ((event.key === Qt.Key_Tab) && (event.modifiers & Qt.ControlModifier)) {
+                        root.toggleTab(1)
+                        event.accepted = true
+                    }
+                    if ((event.key === Qt.Key_Backtab) && (event.modifiers & Qt.ControlModifier)) {
+                        root.toggleTab(-1)
                         event.accepted = true
                     }
                 }
@@ -206,7 +268,32 @@ Item {
         }
     }
 
+    FileSelectDialog {
+        id: fileSaveAsDialog
+        title: qsTr("Save As...")
+        
+        onOkBtnClicked: {
+            document.fileUrl = fileUrl
+            newFile = false
+            save()
+        }
+    }
+
+    function saveas() {
+        if(newFile) {
+            var fUrl=""
+            fUrl=StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]+"/Untitled.txt"
+            fileSaveAsDialog.fileUrl=fUrl.substr(7)
+        }
+        else
+            fileSaveAsDialog.fileUrl=document.fileUrl
+        fileSaveAsDialog.visible = true
+    }
+
     function save() {
-        document.saveAs(document.fileUrl)
+        if(newFile)
+            saveas()
+        else
+            document.saveAs(document.fileUrl) 
     }
 }
