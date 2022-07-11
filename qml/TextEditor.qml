@@ -280,20 +280,19 @@ Item {
     }
 
     function saveas() {
-        if(newFile) {
-            var fUrl=""
-            fUrl=StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]+"/Untitled.txt"
-            fileSaveAsDialog.fileUrl=fUrl.substr(7)
-        }
+        var fUrl = ""
+        if(newFile)
+            fUrl = StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]+"/Untitled.txt"
         else
-            fileSaveAsDialog.fileUrl=document.fileUrl
+            fUrl = document.fileUrl.toString()
+        fileSaveAsDialog.fileUrl = fUrl.substr(7)
         fileSaveAsDialog.visible = true
     }
 
     function save() {
         if(newFile)
             saveas()
-        else
+        else if(documentModified)
             document.saveAs(document.fileUrl) 
     }
 }

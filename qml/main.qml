@@ -38,7 +38,7 @@ FishUI.Window {
         id: fileHelper
 
         onNewPath: {
-            _tabView.addTab(textEditorComponent, { fileUrl: path })
+            _tabView.addTab(textEditorComponent, { fileUrl: path, newFile: false })
         }
     }
 
@@ -150,7 +150,7 @@ FishUI.Window {
     }
 
     function addPath(path) {
-        _tabView.addTab(textEditorComponent, { fileUrl: path })
+        _tabView.addTab(textEditorComponent, { fileUrl: path, newFile: false })
     }
 
     function addTab() {
