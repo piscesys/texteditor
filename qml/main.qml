@@ -162,7 +162,7 @@ FishUI.Window {
         for (var i = 0; i < _tabView.contentModel.count; i++) {
             var obj = _tabView.contentModel.get(i)
             if (obj.documentModified) {
-                exitPrompt.index = i
+                exitPrompt.index = -1
                 exitPrompt.visible = true
                 close.accepted = false
                 return
@@ -217,6 +217,6 @@ FishUI.Window {
     }
 
     Component.onCompleted: {
-        // addTab()
+        addTab()
     }
 }
