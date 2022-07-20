@@ -61,6 +61,105 @@ Item {
         }
     }
 
+    // Global Menu
+    MenuBar {
+        id: appMenu
+
+        Menu {
+            title: qsTr("File")
+
+            MenuItem {
+                text: qsTr("New")
+                onTriggered: root.addTab()
+            }
+
+            MenuSeparator {}
+
+            MenuItem {
+                text: qsTr("Open...")
+                onTriggered: root.open()
+            }
+
+            MenuSeparator {}
+
+            MenuItem {
+                text: qsTr("Save")
+                onTriggered: control.save()
+                enabled: document.modified
+            }
+            MenuItem {
+                text: qsTr("Save as...")
+                onTriggered: control.saveas()
+            }
+
+            MenuSeparator {}
+
+            MenuItem {
+                text: qsTr("Quit")
+                onTriggered: {
+                    if (root.closeAll())
+                        Qt.quit()
+                }
+            }
+        }
+
+        Menu {
+            title: qsTr("Edit")
+
+            MenuItem {
+                text: qsTr("Select All")
+                onTriggered: body.selectAll()
+            }
+
+            MenuSeparator {}
+
+            MenuItem {
+                text: qsTr("Cut")
+                onTriggered: body.cut()
+                enabled: !(body.selectedText === "")
+            }
+            MenuItem {
+                text: qsTr("Copy")
+                onTriggered: body.copy()
+                enabled: !(body.selectedText === "")
+            }
+            MenuItem {
+                text: qsTr("Paste")
+                onTriggered: body.paste()
+                enabled: body.canPaste
+            }
+
+            MenuSeparator {}
+
+            MenuItem {
+                text: qsTr("Undo")
+                onTriggered: body.undo()
+                enabled: body.canUndo
+            }
+            MenuItem {
+                text: qsTr("Redo")
+                onTriggered: body.redo()
+                enabled: body.canRedo
+            }
+        }
+
+        Menu {
+            title: qsTr("Help")
+
+            MenuItem {
+                text: qsTr("About")
+                onTriggered: _aboutDialog.show()
+            }
+        }
+    }
+
+    FishUI.AboutDialog {
+        id: _aboutDialog
+        name: qsTr("Text Editor")
+        description: qsTr("A simple text editor designed for Piscesys.")
+        iconSource: "image://icontheme/pisces-texteditor"
+    }
+
     ScrollView {
         id: _scrollView
         anchors.fill: parent
@@ -131,19 +230,11 @@ Item {
                         root.closeCurrentTab()
                         event.accepted = true
                     }
-
-                    /*if ((event.key === Qt.Key_Tab)
-                            && (event.modifiers & Qt.ControlModifier)
-                            && !(event.modifiers & Qt.ShiftModifier)) {
-                        root.toggleTab(1)
+                    if((event.key === Qt.Key_O)
+                            && (event.modifiers & Qt.ControlModifier)) {
+                        root.open()
                         event.accepted = true
                     }
-                    if ((event.key === Qt.Key_Tab)
-                            && (event.modifiers & Qt.ControlModifier)
-                            && (event.modifiers & Qt.ShiftModifier)) { // Why isn't this working?
-                        root.toggleTab(0)
-                        event.accepted = true
-                    }*/ //Shift + Tab = Qt.Key_Backtab. Solution below:
                     if ((event.key === Qt.Key_Tab) && (event.modifiers & Qt.ControlModifier)) {
                         root.toggleTab(1)
                         event.accepted = true
@@ -270,7 +361,8 @@ Item {
 
     FileSelectDialog {
         id: fileSaveAsDialog
-        title: qsTr("Save As...")
+        title: qsTr("Save as...")
+        displayText: qsTr("Save as...")
         
         onOkBtnClicked: {
             document.fileUrl = fileUrl

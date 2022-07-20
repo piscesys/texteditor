@@ -48,7 +48,7 @@ FishUI.Window {
         property var index: -1
 
         onOkBtnClicked: {
-            if(index != -1)
+            if (index != -1)
                 closeTab(index)
             else
                 Qt.quit()
@@ -150,25 +150,42 @@ FishUI.Window {
     }
 
     function addPath(path) {
-        _tabView.addTab(textEditorComponent, { fileUrl: path, newFile: false })
+        fileHelper.addPath(path)
+        // _tabView.addTab(textEditorComponent, { fileUrl: path, newFile: false })
     }
 
     function addTab() {
-        _tabView.addTab(textEditorComponent, {})
+        _tabView.addTab(textEditorComponent, { fileUrl: "", newFile: true, fileName: qsTr("Untitled") })
         _tabView.currentItem.forceActiveFocus()
     }
 
-    onClosing: {
+    FileSelectDialog {
+        id: fileOpenDialog
+        title: qsTr("Open...")
+        displayText: qsTr("Open...")
+        
+        onOkBtnClicked: addPath(fileUrl)
+    }
+
+    function open() {
+        fileOpenDialog.fileUrl = qsTr("/path/to/file.ext")
+        fileOpenDialog.visible = true
+    }
+
+    function closeAll() {
         for (var i = 0; i < _tabView.contentModel.count; i++) {
             var obj = _tabView.contentModel.get(i)
             if (obj.documentModified) {
                 exitPrompt.index = -1
                 exitPrompt.visible = true
-                close.accepted = false
-                return
+                return false
             }
         }
-        close.accepted = true
+        return true
+    }
+
+    onClosing: {
+        close.accepted = closeAll()
     }
 
     function closeProtection(index) {
@@ -211,12 +228,10 @@ FishUI.Window {
 
         TextEditor {
             fileUrl: ""
-            fileName: "Untitled"
             newFile: true
         }
     }
 
     Component.onCompleted: {
-        addTab()
     }
 }

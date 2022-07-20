@@ -1,12 +1,17 @@
+pisces-texteditor (0.9.2) misaka; urgency=medium
+  * feat: Menu bar; Action open; Command line parser
+
+ -- Tsukuyomi Toki <huangzimocp@126.com>  Wed, 20 Jul 2022 23:40:59 +0800
+
 pisces-texteditor (0.9.1) misaka; urgency=medium
 
   * fix : Unable to build binary package
   * feat: Close tab prompt when not saved; Simple save as prompt
 
- -- Tsukuyomi Toki <huangzimocp@126.com> Mon, 11 Jul 2022 16:09:09 +0800
+ -- Tsukuyomi Toki <huangzimocp@126.com>  Mon, 11 Jul 2022 16:09:09 +0800
 
 pisces-texteditor (0.9) misaka; urgency=medium
 
   * Initial Release for Pisces.
 
- -- Piscesys Packaging Team <support@piscesys.com> Sun, 10 Jul 2022 15:15:15 +0800
+ -- Piscesys Packaging Team <support@piscesys.com>  Sun, 10 Jul 2022 15:15:15 +0800

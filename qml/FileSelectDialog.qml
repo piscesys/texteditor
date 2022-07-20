@@ -29,6 +29,7 @@ FishUI.Window {
     property var contentWidth: _mainLayout.implicitWidth + FishUI.Units.largeSpacing * 2
     property var contentHeight: _mainLayout.implicitHeight + header.height + FishUI.Units.largeSpacing * 2
     property var fileUrl: ""
+    property var displayText: ""
 
     flags: Qt.WindowStaysOnTopHint | Qt.Dialog | Qt.FramelessWindowHint
     modality: Qt.WindowModal
@@ -53,7 +54,7 @@ FishUI.Window {
         anchors.margins: FishUI.Units.smallSpacing
 
         Label {
-            text: qsTr("Save As...")
+            text: displayText
         }
         ColumnLayout {
             spacing: FishUI.Units.largeSpacing
@@ -81,6 +82,7 @@ FishUI.Window {
                 Button {
                     text: qsTr("OK")
                     Layout.fillWidth: true
+                    flat: true
 
                     onClicked: {
                         fileUrl = "file://" + textInput.text
@@ -92,7 +94,6 @@ FishUI.Window {
                 Button {
                     text: qsTr("Cancel")
                     Layout.fillWidth: true
-                    flat: true
                     onClicked: control.visible = false
                 }
             }
