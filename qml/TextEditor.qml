@@ -24,6 +24,7 @@ import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
 import Qt.labs.platform 1.1
+import QtQuick.Dialogs 1.3
 import FishUI 1.0 as FishUI
 import Pisces.TextEditor 1.0
 
@@ -359,26 +360,29 @@ Item {
         }
     }
 
-    FileSelectDialog {
+    FileDialog {
         id: fileSaveAsDialog
         title: qsTr("Save as...")
-        displayText: qsTr("Save as...")
-        
-        onOkBtnClicked: {
-            document.fileUrl = fileUrl
+        folder: shortcuts.home
+        nameFilters: [ qsTr("All files (*)") ]
+
+        selectExisting: false
+        selectFolder: false
+        selectMultiple: false
+
+        onAccepted: {
+            document.fileUrl = fileSaveAsDialog.fileUrl.toString()
             newFile = false
             save()
         }
+        Component.onCompleted: visible = false
     }
 
     function saveas() {
-        var fUrl = ""
-        if(newFile)
-            fUrl = StandardPaths.standardLocations(StandardPaths.DocumentsLocation)[0]+"/Untitled.txt"
-        else
-            fUrl = document.fileUrl.toString()
-        fileSaveAsDialog.fileUrl = fUrl.substr(7)
-        fileSaveAsDialog.visible = true
+        fileSaveAsDialog.folder = (newFile
+            ? fileSaveAsDialog.shortcuts.documents
+            : document.fileUrl.toString().slice(0, -document.filename.length))
+        fileSaveAsDialog.open()
     }
 
     function save() {

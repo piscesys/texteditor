@@ -22,6 +22,7 @@ import QtQuick 2.15
 import QtQuick.Window 2.15
 import QtQuick.Controls 2.15
 import QtQuick.Layouts 1.15
+import QtQuick.Dialogs 1.3
 import FishUI 1.0 as FishUI
 import Pisces.TextEditor 1.0
 
@@ -38,7 +39,11 @@ FishUI.Window {
         id: fileHelper
 
         onNewPath: {
-            _tabView.addTab(textEditorComponent, { fileUrl: path, newFile: false })
+            _tabView.addTab(textEditorComponent, { fileUrl: "file://" + path, newFile: false })
+        }
+
+        onUnavailable: {
+            root.showPassiveNotification(qsTr("%1 doesn't exists").arg(path), 3000)
         }
     }
 
@@ -108,7 +113,7 @@ FishUI.Window {
         onDropped: {
             if (drop.hasUrls) {
                 for (var i = 0; i < drop.urls.length; ++i) {
-                    fileHelper.addPath(drop.urls[i])
+                    root.addPath(drop.urls[i])
                 }
             }
         }
@@ -159,17 +164,25 @@ FishUI.Window {
         _tabView.currentItem.forceActiveFocus()
     }
 
-    FileSelectDialog {
+    FileDialog {
         id: fileOpenDialog
         title: qsTr("Open...")
-        displayText: qsTr("Open...")
-        
-        onOkBtnClicked: addPath(fileUrl)
+        folder: shortcuts.home
+        nameFilters: [ qsTr("All files (*)") ]
+
+        selectExisting: true
+        selectFolder: false
+        selectMultiple: true
+
+        onAccepted: {
+            for (var i = 0; i < fileOpenDialog.fileUrls.length; i++)
+                addPath(fileOpenDialog.fileUrls[i].toString().substr(7))
+        }
+        Component.onCompleted: visible = false
     }
 
     function open() {
-        fileOpenDialog.fileUrl = qsTr("/path/to/file.ext")
-        fileOpenDialog.visible = true
+        fileOpenDialog.open()
     }
 
     function closeAll() {

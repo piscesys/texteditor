@@ -1,8 +1,26 @@
-#include <QGuiApplication>
+/*
+ * Copyright (C) 2021 Pisces Technology Co., Ltd.
+ *
+ * Author:     TsukuyomiToki <huangzimocp@126.com>
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#include <QApplication>
 #include <QQmlApplicationEngine>
 #include <QCommandLineParser>
 #include <QMetaObject>
-#include <QDir>
 
 #include "documenthandler.h"
 #include "highlightmodel.h"
@@ -13,16 +31,21 @@ QStringList formatUriList(const QStringList &list)
     QStringList val;
 
     for (const QString &i : list) {
-        QDir path(i);
-        QString absPath = path.absolutePath();
-        if(!val.contains(absPath, Qt::CaseSensitive))
-            val.append(absPath);
+        QFileInfo path(i);
+        if (path.exists()) {
+            QString absPath = path.absoluteFilePath();
+            if (!val.contains(absPath, Qt::CaseSensitive))
+                val.append(absPath);
+        }
+        else
+            qDebug() << "pisces-texteditor: " << i << "doesn't exist";
     }
 
     return val;
 }
 
-void openFile(QObject *qmlObj, QString &fileUrl) {
+void openFile(QObject *qmlObj, QString &fileUrl)
+{
     QVariant val_return;
     QVariant val_arg(fileUrl);
     QMetaObject::invokeMethod(qmlObj,
@@ -31,7 +54,8 @@ void openFile(QObject *qmlObj, QString &fileUrl) {
                             Q_ARG(QVariant,val_arg));
 }
 
-void newTab(QObject *qmlObj) {
+void newTab(QObject *qmlObj)
+{
     QVariant val_return;
     QVariant val_arg;
     QMetaObject::invokeMethod(qmlObj,
@@ -45,7 +69,8 @@ int main(int argc, char *argv[])
     QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
 #endif
 
-    QGuiApplication app(argc, argv);
+    QApplication app(argc, argv);
+    app.setOrganizationName("piscesys");
 
     qmlRegisterType<DocumentHandler>("Pisces.TextEditor", 1, 0, "DocumentHandler");
     qmlRegisterType<FileHelper>("Pisces.TextEditor", 1, 0, "FileHelper");
@@ -72,14 +97,13 @@ int main(int argc, char *argv[])
 
     QObject *root = engine.rootObjects().first();
 
-    if (!parser.positionalArguments().isEmpty()) {
-        QStringList fileList = formatUriList(parser.positionalArguments());
-        for (QString &i : fileList) {
-            QString fi = "file://" + i;
-            openFile(root, fi);
-        }
+    QStringList fileList = formatUriList(parser.positionalArguments());
+    if (!fileList.isEmpty()) {
+        for (QString &i : fileList)
+            openFile(root, i);
     }
-    else newTab(root);
+    else
+        newTab(root);
 
     return app.exec();
 }

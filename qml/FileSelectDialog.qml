@@ -70,7 +70,7 @@ FishUI.Window {
                 text: fileUrl
 
                 onAccepted: {
-                    fileUrl = "file://" + text
+                    fileUrl = text
                     control.visible = false
                     control.okBtnClicked()
                 }
@@ -85,7 +85,7 @@ FishUI.Window {
                     flat: true
 
                     onClicked: {
-                        fileUrl = "file://" + textInput.text
+                        fileUrl = textInput.text
                         control.visible = false
                         control.okBtnClicked()
                     }

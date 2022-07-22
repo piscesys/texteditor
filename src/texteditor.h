@@ -2,6 +2,7 @@
 #define TEXTEDITOR_H
 
 #include <QObject>
+#include <QFileInfo>
 
 class FileHelper : public QObject
 {
@@ -14,6 +15,7 @@ public:
 
 signals:
     void newPath(const QString &path);
+    void unavailable(const QString &path);
 };
 
 #endif // TEXTEDITOR_H

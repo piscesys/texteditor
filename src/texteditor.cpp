@@ -8,5 +8,9 @@ FileHelper::FileHelper(QObject *parent)
 
 void FileHelper::addPath(const QString &path)
 {
-    emit newPath(path);
+    QFileInfo file(path);
+    if(file.exists())
+        emit newPath(file.absoluteFilePath());
+    else
+        emit unavailable(path);
 }
